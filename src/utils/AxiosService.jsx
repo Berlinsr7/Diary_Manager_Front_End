@@ -1,7 +1,7 @@
 import axios from "axios";
 
 let AxiosService = axios.create({
-    baseURL:"http://localhost:4000",
+    baseURL:"https://diary-manager-backend-nobu.onrender.com",
     headers:{
         "Content-Type":"application/json"
     }
