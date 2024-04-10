@@ -7,6 +7,10 @@ import toast from 'react-hot-toast'
 
 const SignUp = () => {
 
+    useEffect(()=>{
+        sessionStorage.clear()
+      },[])
+      
     const handleCreate = async(e)=>{
         e.preventDefault()
         try {
