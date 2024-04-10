@@ -34,7 +34,7 @@ const SignUp = () => {
             }
         
             let res = await AxiosService.post(`${ApiRoutes.USER.path}`,formProps,{
-                authenticate:ApiRoutes.USER.authenticate
+                authenticate:false
             }) 
             toast.success("User Created Successfully")
           }else{
