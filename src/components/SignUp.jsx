@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Header from './Header'
 import { Button, Form } from 'react-bootstrap'
 import AxiosService from '../utils/AxiosService'
@@ -10,7 +10,7 @@ const SignUp = () => {
     useEffect(()=>{
         sessionStorage.clear()
       },[])
-      
+
     const handleCreate = async(e)=>{
         e.preventDefault()
         try {
