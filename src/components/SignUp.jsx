@@ -4,6 +4,7 @@ import { Button, Form } from 'react-bootstrap'
 import AxiosService from '../utils/AxiosService'
 import ApiRoutes from '../utils/ApiRoutes'
 import toast from 'react-hot-toast'
+import {useNavigate} from 'react-router-dom'
 
 const SignUp = () => {
 
@@ -11,6 +12,7 @@ const SignUp = () => {
         sessionStorage.clear()
       },[])
 
+      const navigate = useNavigate()
     const handleCreate = async(e)=>{
         e.preventDefault()
         try {
@@ -37,6 +39,7 @@ const SignUp = () => {
                 authenticate:false
             }) 
             toast.success("User Created Successfully")
+            navigate('/login')
           }else{
             toast.error("User Already Exist")
           }
