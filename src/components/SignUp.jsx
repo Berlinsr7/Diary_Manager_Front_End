@@ -18,7 +18,7 @@ const SignUp = () => {
           const formProps = Object.fromEntries(formData);
     
           let users = await AxiosService.get(`${ApiRoutes.USER.path}`,{
-            authenticate:ApiRoutes.USER.authenticate
+            authenticate:false
         })
           var fetchedUsers = users.data.users
 
