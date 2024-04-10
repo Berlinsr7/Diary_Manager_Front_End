@@ -15,15 +15,15 @@ const Cards = ({name, description, noteId, date, deleteNote, editNote, disEdit, 
 
   return (
     <div className="col-md-4 col-lg-3 col-sm-6 mb-3 lobster-regular">
-        <Card border='light' bg={'info'}
+        <Card border='info' bg={'dark'}
           key={'info'}
-          text={'white'}
+          text={'info'}
           className="mb-2">
         <Card.Body>
             <Card.Title>{name}</Card.Title>
-            <Card.Subtitle className="mb-2 text-muted">{date}</Card.Subtitle>
+            <Card.Subtitle className="mb-2">{date}</Card.Subtitle>
             <Card.Text>{description}</Card.Text>
-            <Button className='m-2' variant="secondary" onClick={()=> handleEdit(noteId, name, description)} disabled={disEdit}>Edit Note</Button>
+            <Button className='m-2' variant="light" onClick={()=> handleEdit(noteId, name, description)} disabled={disEdit}>Edit Note</Button>
             <Button className='m-2' variant="danger" onClick={()=> handleDelete(noteId)}>Delete Note</Button>
         </Card.Body>
         </Card>

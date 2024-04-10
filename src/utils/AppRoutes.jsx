@@ -3,6 +3,7 @@ import CalanderPage from "../components/CalanderPage";
 import Home from "../components/Home"
 import LoginPage from "../components/LoginPage";
 import Notes from "../components/Notes";
+import SignUp from "../components/SignUp";
 
 const Approutes = [
     {
@@ -24,6 +25,10 @@ const Approutes = [
     {
         path : '/login',
         element : <LoginPage/>
+    },
+    {
+        path : '/signup',
+        element : <SignUp/>
     },
     {
         path : '*',

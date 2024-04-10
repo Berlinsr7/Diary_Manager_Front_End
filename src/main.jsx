@@ -6,8 +6,11 @@ import { Toaster } from 'react-hot-toast';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
+  // <React.StrictMode>
+  <>
+  <App />
     <Toaster/>
-  </React.StrictMode>,
+  </>
+    
+  // {/* </React.StrictMode>, */}
 )

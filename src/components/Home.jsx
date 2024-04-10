@@ -11,39 +11,39 @@ const Home = () => {
 
   const navigate = useNavigate()
 
-  const [show, setShow] = useState(false);
+  // const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  // const handleClose = () => setShow(false);
+  // const handleShow = () => setShow(true);
 
-  const handleCreate = async(e)=>{
-    e.preventDefault()
-    try {
-      const formData = new FormData(e.target);
-      const formProps = Object.fromEntries(formData);
+  // const handleCreate = async(e)=>{
+  //   e.preventDefault()
+  //   try {
+  //     const formData = new FormData(e.target);
+  //     const formProps = Object.fromEntries(formData);
 
-      let users = await AxiosService.get(`${ApiRoutes.USER.path}`,{
-        authenticate:ApiRoutes.USER.authenticate
-    })
-      var fetchedUsers = users.data.users
-      var len = fetchedUsers.length
-      if (len == 0){
-          formProps.userId = 1
-      }
-      else{
-          formProps.userId = len+1
-      }
+  //     let users = await AxiosService.get(`${ApiRoutes.USER.path}`,{
+  //       authenticate:ApiRoutes.USER.authenticate
+  //   })
+  //     var fetchedUsers = users.data.users
+  //     var len = fetchedUsers.length
+  //     if (len == 0){
+  //         formProps.userId = 1
+  //     }
+  //     else{
+  //         formProps.userId = len+1
+  //     }
 
-      let res = await AxiosService.post(`${ApiRoutes.USER.path}`,formProps,{
-          authenticate:ApiRoutes.USER.authenticate
-      }) 
+  //     let res = await AxiosService.post(`${ApiRoutes.USER.path}`,formProps,{
+  //         authenticate:ApiRoutes.USER.authenticate
+  //     }) 
 
-      } catch (error) {
-          console.error('Error Creating notes: ', error);
-      }
-    setShow(false);
-    toast.success("User Created Successfully")
-  }
+  //     } catch (error) {
+  //         console.error('Error Creating notes: ', error);
+  //     }
+  //   setShow(false);
+  //   toast.success("User Created Successfully")
+  // }
 
   return (
     <>
@@ -85,14 +85,14 @@ const Home = () => {
               <div className="row me-md-5 mt-4">
                 <div className="col text-light text-center">
                   <p className='lead'>Click here to Sign Up</p>
-                  <p className='btn btn-light' onClick={handleShow}>Sign up</p>
+                  <p className='btn btn-light' onClick={()=> navigate('/signup')}>Sign up</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <Modal show={show} onHide={handleClose}>
+        {/* <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Sign Up!</Modal.Title>
         </Modal.Header>
@@ -122,13 +122,13 @@ const Home = () => {
             </Button>
           </Form>
         </Modal.Body>
-        {/* <Modal.Footer>
+        <Modal.Footer>
           
           <Button variant="primary" onClick={handleClose}>
             Save Changes
           </Button>
-        </Modal.Footer> */}
-      </Modal>
+        </Modal.Footer>
+      </Modal> */}
     </>
   )
 }

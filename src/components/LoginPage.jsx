@@ -25,6 +25,7 @@ function Login() {
     })
     if(res.status===200)
     {
+      sessionStorage.setItem('token',res.data.token)
       sessionStorage.setItem('name',res.data.name)
       sessionStorage.setItem('id',res.data.userId)
 

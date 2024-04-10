@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import Header from './Header'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -7,6 +7,7 @@ import AxiosService from '../utils/AxiosService'
 import toast from 'react-hot-toast';
 import Cards from './Cards';
 import ApiRoutes from '../utils/ApiRoutes';
+import useLogout from '../hooks/useLogout';
 
 const Notes = () => {
 
@@ -15,6 +16,8 @@ const Notes = () => {
     const [showButton, setShowButton] = useState(false);
     const [disEdit, setDisEdit] = useState(false);
     const [formdata, setFormData] = useState({ name: '', description: '' });
+    let logout = useLogout()
+    const navigate = useNavigate()
 
     if(date){
         useEffect(()=>{
@@ -26,8 +29,17 @@ const Notes = () => {
                       }) 
                     setnotes(res.data.notes.filter((note) => note.date === date));
                 } catch (error) {
-                    console.log(error)
-                    toast.error("Please login first")
+                    console.log(error.response.data.message)
+                    if(error.response.status == 401){
+                        if(error.response.data.message == "Unauthorised Access"){
+                            toast.error(error.response.data.message)
+                            navigate('/login')
+                        }
+                        else{
+                            toast.error(error.response.data.message)
+                            logout() 
+                        }                        
+                    }                 
                 }
                 }        
             fetchData();
@@ -36,10 +48,24 @@ const Notes = () => {
         useEffect(()=>{
             const fetchData = async ()=>{
                 const id = sessionStorage.getItem('id')
-                let res = await AxiosService.get(`${ApiRoutes.USER.path}/${id}/notes`,{
+                try {
+                    let res = await AxiosService.get(`${ApiRoutes.USER.path}/${id}/notes`,{
                     authenticate:ApiRoutes.USER.authenticate
                   }) 
                 setnotes(res.data.notes)
+                } catch (error) {
+                    console.log(error.response.data.message)
+                    if(error.response.status == 401){
+                        if(error.response.data.message == "Unauthorised Access"){
+                            toast.error(error.response.data.message)
+                            navigate('/login')
+                        }
+                        else{
+                            toast.error(error.response.data.message)
+                            logout() 
+                        }    
+                    }   
+                }                
                 }        
             fetchData();
         },[])
@@ -66,8 +92,6 @@ const Notes = () => {
                 var noteid = notes[len-1].noteId
                 formProps.noteId = noteid+1
             }
-
-            console.log(formProps.noteId)
             setnotes([...notes,formProps])
             const id = sessionStorage.getItem('id')
             let res = await AxiosService.post(`${ApiRoutes.USER.path}/${id}/notes`,formProps,{
@@ -76,7 +100,11 @@ const Notes = () => {
             setFormData({ name: '', description: '' });
             toast.success("Note Created Successfully")
         } catch (error) {
-            console.error('Error Creating notes: ', error);
+            console.log(error.response.data.message)
+            if(error.response.status == 401){
+                toast.error(error.response.data.message)
+                logout()
+            }   
         }
     }
 
@@ -90,7 +118,11 @@ const Notes = () => {
             console.log(notes)
             toast.success("Deleted Successfully")
           } catch (error) {
-            console.error('Error deleting note:', error);
+            console.log(error.response.data.message)
+            if(error.response.status == 401){
+                toast.error(error.response.data.message)
+                logout()
+            }   
           }
     }
 
@@ -113,7 +145,11 @@ const Notes = () => {
             setnotes(res.data.result.filter((note) => note.date === date))
             toast.success(res.data.message)
         } catch (error) {
-            console.error('Error Saving note:', error);
+            console.log(error.response.data.message)
+            if(error.response.status == 401){
+                toast.error(error.response.data.message)
+                logout()
+            }   
         }
     }
 

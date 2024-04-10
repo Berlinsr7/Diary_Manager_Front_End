@@ -18,6 +18,7 @@ function Header() {
             <Nav.Link onClick={()=>navigate("/calander")}>Calander</Nav.Link>
             <Nav.Link onClick={()=>navigate("/notes")}>Notes</Nav.Link>
             <Nav.Link onClick={()=>navigate("/login")}>Logout</Nav.Link>
+            <Nav.Link onClick={()=>navigate("/signup")}>Sign Up</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

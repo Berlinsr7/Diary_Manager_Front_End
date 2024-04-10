@@ -5,7 +5,7 @@ const  ApiRoutes = {
     },
     USER : {
         path : '/users',
-        authenticate:false
+        authenticate:true
     }
 }
    
