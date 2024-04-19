@@ -2,6 +2,7 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 function Header() {
   let navigate = useNavigate()
@@ -17,7 +18,10 @@ function Header() {
             <Nav.Link onClick={()=>navigate("/")}>Home</Nav.Link>
             <Nav.Link onClick={()=>navigate("/calander")}>Calander</Nav.Link>
             <Nav.Link onClick={()=>navigate("/notes")}>Notes</Nav.Link>
-            <Nav.Link onClick={()=>navigate("/login")}>Logout</Nav.Link>
+            <Nav.Link onClick={()=>{
+              toast.success("Logout Successfull")
+              navigate("/login")
+            }}>Logout</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

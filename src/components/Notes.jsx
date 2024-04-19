@@ -8,10 +8,12 @@ import toast from 'react-hot-toast';
 import Cards from './Cards';
 import ApiRoutes from '../utils/ApiRoutes';
 import useLogout from '../hooks/useLogout';
+import Spinner from './Spinner';
 
 const Notes = () => {
 
-    const {date} = useParams()    
+    const {date} = useParams()  
+    const [loading, setLoading] = useState(false)  
     const [notes, setnotes] = useState([])
     const [showButton, setShowButton] = useState(false);
     const [disEdit, setDisEdit] = useState(false);
@@ -23,6 +25,7 @@ const Notes = () => {
         useEffect(()=>{
             const fetchData = async ()=>{
                 const id = sessionStorage.getItem('id')
+                setLoading(true)
                 try {
                     let res = await AxiosService.get(`${ApiRoutes.USER.path}/${id}/notes`,{
                         authenticate:ApiRoutes.USER.authenticate
@@ -41,6 +44,9 @@ const Notes = () => {
                         }                        
                     }                 
                 }
+                finally {
+                    setLoading(false);
+                  }
                 }        
             fetchData();
         },[])
@@ -48,6 +54,7 @@ const Notes = () => {
         useEffect(()=>{
             const fetchData = async ()=>{
                 const id = sessionStorage.getItem('id')
+                setLoading(true)
                 try {
                     let res = await AxiosService.get(`${ApiRoutes.USER.path}/${id}/notes`,{
                     authenticate:ApiRoutes.USER.authenticate
@@ -65,7 +72,10 @@ const Notes = () => {
                             logout() 
                         }    
                     }   
-                }                
+                } 
+                finally {
+                    setLoading(false);
+                  }               
                 }        
             fetchData();
         },[])
@@ -79,26 +89,57 @@ const Notes = () => {
 
     const handleAdd = async (e)=>{
         e.preventDefault()
-        
+        setLoading(true)
+        const errors = {}
+    
         try {
             const formData = new FormData(e.target);
             const formProps = Object.fromEntries(formData);
 
-            var len = notes.length
-            if (len == 0){
-                formProps.noteId = 1
+            if(formProps.name == ''){
+                errors.name = 'Enter a name for the Note'
             }
+
+            if(formProps.description == ''){
+                errors.description = 'Enter a description for the Note'
+            }
+
+            if(!/(20)\d{2}\-(0[1-9]|1[1,2])\-(0[1-9]|[12][0-9]|3[01])/.test(formProps.date)){
+                errors.date = 'Date should be in YYYY-MM-DD format'
+            }
+
+            if(!errors.hasOwnProperty("name") && !errors.hasOwnProperty("description") && !errors.hasOwnProperty("date")){
+                var len = notes.length
+                if (len == 0){
+                    formProps.noteId = 1
+                }
+                else{
+                    var noteid = notes[len-1].noteId
+                    formProps.noteId = noteid+1
+                }
+                setnotes([...notes,formProps])
+                const id = sessionStorage.getItem('id')
+                let res = await AxiosService.post(`${ApiRoutes.USER.path}/${id}/notes`,formProps,{
+                    authenticate:ApiRoutes.USER.authenticate
+                }) 
+                setFormData({ name: '', description: '' });
+                toast.success("Note Created Successfully")
+            }  
+            else if(errors.hasOwnProperty("name"))  
+            {
+                toast.error(errors.name)
+            }        
+            else if(errors.hasOwnProperty("description"))  
+            {
+                toast.error(errors.description)
+            }        
+            else if(errors.hasOwnProperty("date"))  
+            {
+                toast.error(errors.date)
+            } 
             else{
-                var noteid = notes[len-1].noteId
-                formProps.noteId = noteid+1
-            }
-            setnotes([...notes,formProps])
-            const id = sessionStorage.getItem('id')
-            let res = await AxiosService.post(`${ApiRoutes.USER.path}/${id}/notes`,formProps,{
-                authenticate:ApiRoutes.USER.authenticate
-            }) 
-            setFormData({ name: '', description: '' });
-            toast.success("Note Created Successfully")
+                toast.error('Invalid Data')
+            }       
         } catch (error) {
             console.log(error.response.data.message)
             if(error.response.status == 401){
@@ -106,9 +147,13 @@ const Notes = () => {
                 logout()
             }   
         }
+        finally {
+            setLoading(false);
+          }          
     }
 
     const deleteNote = async (noteId)=>{
+        setLoading(true)
         try {
             const id = sessionStorage.getItem('id')
             await AxiosService.delete(`${ApiRoutes.USER.path}/${id}/notes/${noteId}`,{
@@ -124,6 +169,9 @@ const Notes = () => {
                 logout()
             }   
           }
+          finally {
+            setLoading(false);
+          }  
     }
 
     const editNote = (noteId, name, description)=>{
@@ -133,6 +181,7 @@ const Notes = () => {
     }
 
     const handleSave = async ()=>{
+        setLoading(true)
         try {
             setShowButton(!showButton);
             setDisEdit(false)   
@@ -151,6 +200,9 @@ const Notes = () => {
                 logout()
             }   
         }
+        finally {
+            setLoading(false);
+          }  
     }
 
   return (
@@ -185,6 +237,7 @@ const Notes = () => {
                     </Form>
                 </div>
             </div>
+            {loading && <Spinner />}
             <div className="row">
                 {notes.length === 0 ? "Create your tasks here" : notes.map((note,index) => <Cards key={index} name={note.name} description={note.description} 
                 noteId={note.noteId} date={note.date} deleteNote={deleteNote} editNote={editNote} disEdit={disEdit} setDisEdit={setDisEdit}/>)}

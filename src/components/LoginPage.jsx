@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react'
+import React,{useEffect,useState} from 'react'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import AxiosService from '../utils/AxiosService'
@@ -6,9 +6,11 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import ApiRoutes from '../utils/ApiRoutes';
-function Login() {
+import Spinner from './Spinner';
 
+function Login() {
   const navigate = useNavigate()
+  const [loading, setLoading] = useState(false);
 
   useEffect(()=>{
     sessionStorage.clear()
@@ -16,32 +18,56 @@ function Login() {
   
   const handleLogin = async(e)=>{
     e.preventDefault()
+    setLoading(true);
+    const errors = {}
    try {
     const formData = new FormData(e.target);
     const formProps = Object.fromEntries(formData);
-
-    let res = await AxiosService.post(ApiRoutes.USER_LOGIN.path,formProps,{
-      authenticate:ApiRoutes.USER_LOGIN.authenticate
-    })
-    if(res.status===200)
-    {
-      sessionStorage.setItem('token',res.data.token)
-      sessionStorage.setItem('name',res.data.name)
-      sessionStorage.setItem('id',res.data.userId)
-
-      toast.success(res.data.message)
-      
-      navigate('/calander')
+    
+    if (!/\S+@\S+\.\S+/.test(formProps.email)) {
+      errors.email = 'Email is not valid';
     }
-    else
-    {
-      toast.error(res.data.message)
+    if (!formProps.password) {
+      errors.password = 'Password is required';
+    }
+
+    if(!errors.hasOwnProperty("email") && !errors.hasOwnProperty("password"))
+      {let res = await AxiosService.post(ApiRoutes.USER_LOGIN.path,formProps,{
+        authenticate:ApiRoutes.USER_LOGIN.authenticate
+      })
+      console.log(res)
+      if(res.status===200)
+      {
+        sessionStorage.setItem('token',res.data.token)
+        sessionStorage.setItem('name',res.data.name)
+        sessionStorage.setItem('id',res.data.userId)
+
+        toast.success(res.data.message)
+        
+        navigate('/calander')
+      }
+      else
+      {
+        toast.error(res.data.message)
+      }}
+    else if(formProps.email == ''){
+      toast.error("Email should not be empty")
+    }
+    else if(formProps.password == ''){
+      toast.error("Password should not be empty")
+    }
+    else{
+      toast.error("Invalid Credentials")
     }
    } catch (error) {
       toast.error(error.response.data.message)      
    }
+   finally {
+    setLoading(false);
+  }
   }
   return <>
+    {loading && <Spinner />}
     <Header/>
     <div className='loginWrapper'>
     <h3>Whose Diary is this</h3>
